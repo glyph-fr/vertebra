@@ -12,6 +12,45 @@ delegateEventSplitter = /^(\S+)\s*(.*)$/
 @camelize = (str) ->
   str.replace(/(^|[-_])(.)/g, (match) -> return match.toUpperCase()).replace(/[-_]/g, '')
 
+@trim = (str) ->
+  str.replace(/^\s+|\s+$/g, '')
+
+_now = Date.now || -> new Date().getTime()
+
+# Throttle function borrowed from underscore.js
+@throttle = (func, wait, options) ->
+  previous = 0
+  options ?= {}
+
+  later = ->
+    previous = if options.leading == false then 0 else _now()
+    timeout = null
+    result = func.apply(context, args)
+    if !timeout
+      context = args = null
+    return
+
+  ->
+    now = _now()
+    previous = now if !previous and options.leading == false
+    remaining = wait - (now - previous)
+    context = this
+    args = arguments
+
+    if remaining <= 0 or remaining > wait
+      if timeout
+        clearTimeout(timeout)
+        timeout = null
+      previous = now
+      result = func.apply(context, args)
+      if !timeout
+        context = args = null
+    else if !timeout and options.trailing != false
+      timeout = setTimeout(later, remaining)
+
+    result
+
+
 # Minimalist Backbon.View with support for view element, this.$ and delegated
 # events on initialization.
 #
