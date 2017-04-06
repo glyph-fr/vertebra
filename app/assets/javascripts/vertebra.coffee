@@ -15,6 +15,9 @@ delegateEventSplitter = /^(\S+)\s*(.*)$/
 @trim = (str) ->
   str.replace(/^\s+|\s+$/g, '')
 
+@isFunction = (obj) ->
+  !!(obj and obj.constructor and obj.call and obj.apply)
+
 _now = Date.now || -> new Date().getTime()
 
 # Throttle function borrowed from underscore.js
@@ -72,10 +75,12 @@ class Vertebra.View
     @delegateEvents()
 
   delegateEvents: ->
-    return unless @events
     @_undelegateEvents()
+    return unless @events
 
-    for key, method of @events
+    events = if isFunction(@events) then @events() else @events
+
+    for key, method of events
       method = @[method]
       continue unless method
       match = key.match(delegateEventSplitter)
