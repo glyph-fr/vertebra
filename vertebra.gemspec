@@ -1,4 +1,4 @@
-$:.push File.expand_path('../lib', __FILE__)
+$:.push File.expand_path('lib', __dir__)
 
 # Maintain your gem's version:
 require 'vertebra/version'
@@ -16,5 +16,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  s.add_dependency "rails", ">= 3.1", '<= 6.0'
+  s.add_dependency 'rails', '>= 3.1', '<= 8.0'
 end
